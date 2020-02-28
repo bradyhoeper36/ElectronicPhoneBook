@@ -1,5 +1,6 @@
 #include "BinarySearchTree.h"
 #include <algorithm>
+#include <fstream>
 
 void Person::setFirstName(std::string first_name)
 {
@@ -257,4 +258,67 @@ std::string Book::Find(std::string first_name, std::string last_name)
 
 void Book::Quit()
 {
+	std::ofstream file("phonebook.txt"); // open file
+
+	if (root == nullptr)
+		return;
+
+	std::stack<Person*> stk; // Create a stack to hold Person nodes
+	stk.push(root);
+
+	while (stk.empty() == false) // Pop the top item from stack and print it 
+	{
+		Person *person = stk.top();
+		if (file.is_open()) // Check that we successfully opened the text file
+		{
+			file << person->getFirstName() << " " << person->getLastName() << " " << person->getPhoneNumber() << std::endl; // Write the Person information
+		}
+
+		stk.pop();
+
+		if (person->right) 
+			stk.push(person->right); // Push right child to the stack
+		if (person->left)
+			stk.push(person->left); // Push left child to the stack
+	}
+	
+	file.close(); // close file
+}
+
+void Book::ReadFile()
+{
+	std::ifstream file("phonebook.txt"); // open file
+	std::string str;
+	size_t pos = 0;
+	int i = 0;
+	std::string firstName;
+	std::string lastName;
+	std::string phoneNumber;
+
+	while (std::getline(file, str))
+	{
+		i = 0;
+		while ((pos = str.find(" ")) != std::string::npos)
+		{
+			if (i == 0)
+			{
+				firstName = str.substr(0, pos);
+			}
+			else if (i == 1)
+			{
+				lastName = str.substr(0, pos);
+			}
+
+			i++;
+			str.erase(0, pos + 1);
+		}
+
+		if (i == 2)
+		{
+			phoneNumber = str.substr(0, pos);
+		}
+
+		Person *person = new Person(firstName, lastName, phoneNumber);
+		this->Add(person);
+	}
 }

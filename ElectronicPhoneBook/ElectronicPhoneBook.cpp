@@ -34,7 +34,7 @@ class UserInterface {
 
 		int runInputLoop()
 		{
-			std::cout << "Options:(1) Add Person\n\t(2) Get Phone Number\n\t(3) Delete Person\n\t(4) Display Phonebook\n\t(5) Quit (write phonebook to file)" << std::endl;
+			std::cout << "Options:(1) Add Person\n\t(2) Get Phone Number\n\t(3) Delete Person\n\t(4) Display Phonebook\n\t(5) Quit (write phonebook to file)\n\t(6) Read file" << std::endl;
 			int userChoice;
 			std::cin >> userChoice;
 
@@ -136,7 +136,11 @@ class UserInterface {
 				return 4;
 				break;
 
-			case (5):
+			case (5): // Quit ()
+				return 5;
+				break;
+			case (6): // Read ()
+				return 6;
 				break;
 			}
 		}
@@ -182,7 +186,12 @@ int main()
 		}
 		else if (option == 5) // Perform Quit()
 		{
-
+			phonebook->Quit();
+			exit(0);
+		}
+		else if (option == 6) // Perform Read()
+		{
+			phonebook->ReadFile();
 		}
 	}
 }

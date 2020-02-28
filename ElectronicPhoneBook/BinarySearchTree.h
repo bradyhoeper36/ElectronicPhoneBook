@@ -33,6 +33,7 @@ public:
 	std::string Find(std::string first_name, std::string last_name);
 	//Save the tree to a text file and quit
 	void Quit();
+	void ReadFile();
 
 private:
 	Person *root;
