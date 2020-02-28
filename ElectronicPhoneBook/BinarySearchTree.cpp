@@ -1,4 +1,5 @@
 #include "BinarySearchTree.h"
+#include <algorithm>
 
 void Person::setFirstName(std::string first_name)
 {
@@ -35,21 +36,18 @@ void Book::Display() const
 	std::stack<Person *> stk;
 	Person *tempPerson = root;
 	std::cout << "Phonebook: " << std::endl;
+
 	while (tempPerson != nullptr || stk.empty() == false)
 	{
-		// Get to very left
-		while (tempPerson != nullptr)
+		while (tempPerson != nullptr) // Get to very left
 		{
-			// Left sub-tree
-			stk.push(tempPerson);
+			stk.push(tempPerson); // Left sub-tree
 			tempPerson = tempPerson->left;
 		}
 
 		tempPerson = stk.top();
 		stk.pop();
-
 		std::cout << "\t" << tempPerson->getFirstName() << " " << tempPerson->getLastName() << " (" << tempPerson->getPhoneNumber() << ")" << std::endl; 
-		
 		tempPerson = tempPerson->right; // Do right sub-tree
 	}
 }
@@ -66,8 +64,7 @@ bool Book::Add(Person *person)
 		Person *tempPerson = root;
 		while (tempPerson != nullptr)
 		{
-			// Compare last names first
-			if (person->getLastName() < tempPerson->getLastName())
+			if (person->getLastName() < tempPerson->getLastName()) // Compare last names first
 			{
 				if (tempPerson->left == nullptr)
 				{
@@ -85,8 +82,7 @@ bool Book::Add(Person *person)
 				}
 				tempPerson = tempPerson->right;
 			}
-			// Last names are identical, compare first names
-			else
+			else // Last names are identical, compare first names
 			{
 				if (person->getFirstName() < tempPerson->getFirstName())
 				{
@@ -202,8 +198,7 @@ bool Book::Delete(std::string first_name, std::string last_name)
 			parent = tempPerson;
 			tempPerson = tempPerson->right;
 		}
-		// Same last name
-		else if (last_name == tempPerson->getLastName())
+		else if (last_name == tempPerson->getLastName()) // Same last name
 		{
 			if (first_name < tempPerson->getFirstName() && tempPerson->left != nullptr)
 			{
@@ -246,8 +241,7 @@ std::string Book::Find(std::string first_name, std::string last_name)
 		{
 			tempPerson = tempPerson->right;
 		}
-		// Same last name
-		else if (last_name == tempPerson->getLastName())
+		else if (last_name == tempPerson->getLastName()) // Same last name
 		{
 			if (first_name < tempPerson->getFirstName() && tempPerson->left != nullptr)
 			{

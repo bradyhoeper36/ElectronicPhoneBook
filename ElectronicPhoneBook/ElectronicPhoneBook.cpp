@@ -17,13 +17,13 @@ class UserInterface {
 			args.push_back(phone_number);
 		}
 
-		void setFindStringArgs(std::string first_name, std::string last_name)
+		void setFindDeleteStringArgs(std::string first_name, std::string last_name)
 		{
 			args.clear();
 			args.push_back(first_name);
 			args.push_back(last_name);
 		}
-		
+
 	public:
 		UserInterface() {}
 
@@ -107,14 +107,33 @@ class UserInterface {
 				}
 
 				std::cout << "\n";
-				setFindStringArgs(firstName, lastName);
+				setFindDeleteStringArgs(firstName, lastName);
 				return 2;
 				break;
 
 			case (3):
+				std::cout << "Enter Information with spaces: FirstName LastName: ";
+				std::getline(std::cin >> std::ws, parseString);
+
+				while ((pos = parseString.find(" ")) != std::string::npos)
+				{
+					if (i == 0)
+					{
+						firstName = parseString.substr(0, pos);
+					}
+
+					i++;
+					parseString.erase(0, pos + 1);
+				}
+
+				lastName = parseString.substr(0, pos);
+				std::cout << "\n";
+				setFindDeleteStringArgs(firstName, lastName);
+				return 3;
 				break;
 
-			case (4):
+			case (4): // Display ()
+				return 4;
 				break;
 
 			case (5):
@@ -149,11 +168,17 @@ int main()
 		}
 		else if (option == 3) // Perform Delete()
 		{
+			args = phonebookInterface->getStringArgs();
+			bool didDelete = phonebook->Delete(args[0], args[1]);
+			if (didDelete)
+				std::cout << "Deleted Person: " << args[0] << " " << args[1] << std::endl;
+			else
+				std::cout << args[0] << " " << args[1] << " does not exist\n";
 
 		}
 		else if (option == 4) // Perform Display()
 		{
-
+			phonebook->Display();
 		}
 		else if (option == 5) // Perform Quit()
 		{
