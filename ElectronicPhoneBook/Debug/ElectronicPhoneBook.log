@@ -1,0 +1,4 @@
+﻿  BinarySearchTree.cpp
+c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\binarysearchtree.cpp(225): warning C4715: 'Book::Delete': not all control paths return a value
+  ElectronicPhoneBook.cpp
+  ElectronicPhoneBook.vcxproj -> C:\Users\BradyH\source\repos\ElectronicPhoneBook\Debug\ElectronicPhoneBook.exe
