@@ -1,2 +1,3 @@
 ﻿  ElectronicPhoneBook.cpp
-  ElectronicPhoneBook.vcxproj -> C:\Users\BradyH\source\repos\ElectronicPhoneBook\Debug\ElectronicPhoneBook.exe
+c:\users\hoeper\desktop\electronicphonebook\electronicphonebook\electronicphonebook.cpp(123): warning C4715: 'UserInterface::runInputLoop': not all control paths return a value
+  ElectronicPhoneBook.vcxproj -> C:\Users\hoeper\Desktop\ElectronicPhoneBook\Debug\ElectronicPhoneBook.exe

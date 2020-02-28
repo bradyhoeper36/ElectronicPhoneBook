@@ -221,7 +221,44 @@ bool Book::Delete(std::string first_name, std::string last_name)
 
 std::string Book::Find(std::string first_name, std::string last_name)
 {
-	return 0;
+	if (root == nullptr)
+		return false;
+
+	if (root->getLastName() == last_name && root->getFirstName() == first_name)
+	{
+		return root->getPhoneNumber();
+	}
+
+	Person *tempPerson = root;
+
+	while (tempPerson != nullptr)
+	{
+		if (tempPerson->getLastName() == last_name && tempPerson->getFirstName() == first_name)
+		{
+			return tempPerson->getPhoneNumber();
+		}
+
+		if (last_name < tempPerson->getLastName() && tempPerson->left != nullptr)
+		{
+			tempPerson = tempPerson->left;
+		}
+		else if (last_name > tempPerson->getLastName() && tempPerson->right != nullptr)
+		{
+			tempPerson = tempPerson->right;
+		}
+		// Same last name
+		else if (last_name == tempPerson->getLastName())
+		{
+			if (first_name < tempPerson->getFirstName() && tempPerson->left != nullptr)
+			{
+				tempPerson = tempPerson->left;
+			}
+			else if (first_name > tempPerson->getFirstName() && tempPerson->right != nullptr)
+			{
+				tempPerson = tempPerson->right;
+			}
+		}
+	}
 }
 
 void Book::Quit()
