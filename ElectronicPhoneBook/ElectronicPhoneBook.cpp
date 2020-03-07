@@ -9,8 +9,8 @@
 enum color{ red, black};
 
 struct Person {
-	Person() : firstName(""), lastName(""), phoneNumber(""), Color(color::black) {}
-	Person(std::string first_name, std::string last_name, std::string phone_number) : firstName(first_name), lastName(last_name), phoneNumber(phone_number), Color(color::black) {};
+	Person() : firstName(""), lastName(""), phoneNumber(""), Color(color::black), left(nullptr), right(nullptr), parent(nullptr) {}
+	Person(std::string first_name, std::string last_name, std::string phone_number) : firstName(first_name), lastName(last_name), phoneNumber(phone_number), Color(color::black), left(nullptr), right(nullptr), parent(nullptr) {};
 	Person *left;
 	Person *right;
 	Person *parent;
@@ -22,7 +22,6 @@ struct Person {
 
 class Book {
 	Person *root;
-	//Person *hold;
 public:
 	Book() : root(nullptr) {}
 	void Display() const //Display the tree in alphabetical order
@@ -46,140 +45,9 @@ public:
 		}
 	}
 	
-	void *Add(Person *person) //Add a node to the tree
+	bool Add(Person *person) //Add a node to the tree
 	{
-		Person *p;
-		Person *q;
-		p = root;
-		q = nullptr;
-
-		if (root == nullptr)
-		{
-			root = person;
-			root->parent = nullptr;
-		}
-		else
-		{
-			while (p != nullptr)
-			{
-				q = p;
-				if (person->lastName < p->lastName)
-					p = p->left;
-				else if (person->lastName > p->lastName)
-					p = p->right;
-				else
-				{
-					if (person->firstName < p->firstName)
-					{
-						p = p->left;
-					}
-					else if (person->firstName > p->firstName)
-					{
-						p = p->right;
-					}
-					else
-						return;
-				}
-			}
-
-			person->parent = q;
-
-			if (person->lastName < q->lastName)
-			{
-				q->left = person;
-			}
-			else if (person->lastName > q->lastName)
-			{
-				q->right = person
-			}
-			else
-			{
-				if (person->firstName < q->firstName)
-				{
-					q->left = person;
-				}
-				else if (person->firstName > q->firstName)
-				{
-					q->right = person;
-				}
-				else
-					return;
-			}
-		}
-
-		InsertFix(person);
-	}
-
-	void InsertFix(Person *person)
-	{
-		Person *tmp1;
-
-		if (root == person)
-		{
-			person->Color = color::black;
-			return;
-		}
-
-		while (person->parent != nullptr && person->parent->Color == color::red)
-		{
-			Person *tmp2 = person->parent->parent;
-
-			if (tmp2->left == person->parent)
-			{
-				if (tmp2->right != nullptr)
-				{
-					tmp1 = tmp2->right;
-
-					if (tmp1->Color == color::red)
-					{
-						person->parent->Color = color::black;
-						tmp1->Color = color::black;
-						tmp2->Color = color::red;
-						person = tmp2;
-					}
-					else
-					{
-						if (person->parent->right == person)
-						{
-							person = person->parent;
-							LeftRotate(person);
-						}
-
-						person->parent->Color = color::black;
-						tmp2->Color = color::red;
-						RightRotate(tmp2);
-					}
-				}
-			}
-			else
-			{
-				if (tmp2->left != nullptr)
-				{
-					tmp1 = tmp2->left;
-
-					if (tmp1->Color == color::red)
-					{
-						person->parent->Color = color::black;
-						tmp1->Color = color::black;
-						tmp2->Color = color::red;
-						person = tmp2;
-					}
-				}
-				else
-				{
-					if (person->parent->left == person)
-					{
-						person = person->parent;
-						RightRotate(person);
-					}
-
-					person->parent->Color == color::black;
-					tmp2->Color = color::red;
-					LeftRotate(tmp2);
-				}
-			}
-			root->Color = color::black; // RED BLACK rule states root is always black
-		}
+		
 	}
 
 	bool Delete(std::string first_name, std::string last_name) //Remove a node from the tree
@@ -291,41 +159,6 @@ public:
 			Person *person = new Person(firstName, lastName, phoneNumber);
 			this->Add(person);
 		}
-	}
-	int getHeight(Person *person)
-	{
-		int max_height = 0;
-		int left_height = 0;
-		int right_height = 0;
-		Person *head = person;
-
-		while (person != nullptr)
-		{
-			person = person->left;
-			left_height++;
-		}
-
-		person = head;
-
-		while (person != nullptr)
-		{
-			person = person->right;
-			right_height++;
-		}
-
-		if (left_height >= right_height)
-		{
-			max_height = left_height + 1;
-		}
-		else if (right_height > left_height)
-		{
-			max_height = right_height + 1;
-		}
-
-		head = nullptr;
-		delete head;
-
-		return max_height;
 	}
 };
 

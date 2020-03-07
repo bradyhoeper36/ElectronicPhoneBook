@@ -1,6 +1,6 @@
-﻿  pch.cpp
-  ElectronicPhoneBook.cpp
-c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(477): warning C4715: 'UserInterface::runInputLoop': not all control paths return a value
-c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(268): warning C4715: 'Book::Find': not all control paths return a value
-c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(228): warning C4715: 'Book::Delete': not all control paths return a value
+﻿  ElectronicPhoneBook.cpp
+c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(176): warning C4553: '==': result of expression not used; did you intend '='?
+c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(284): warning C4553: '==': result of expression not used; did you intend '='?
+c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(662): warning C4715: 'UserInterface::runInputLoop': not all control paths return a value
+c:\users\bradyh\source\repos\electronicphonebook\electronicphonebook\electronicphonebook.cpp(456): warning C4715: 'Book::Find': not all control paths return a value
   ElectronicPhoneBook.vcxproj -> C:\Users\BradyH\source\repos\ElectronicPhoneBook\Debug\ElectronicPhoneBook.exe
