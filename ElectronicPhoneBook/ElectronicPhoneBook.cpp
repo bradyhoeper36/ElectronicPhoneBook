@@ -6,6 +6,8 @@
 #include <fstream>
 #include <stack>
 
+const char *FILENAME = "phonebook.txt";
+
 enum color{ red, black};
 
 struct Person {
@@ -18,6 +20,42 @@ struct Person {
 	std::string lastName;
 	std::string phoneNumber;
 	color Color;
+
+	bool IsOnLeft() 
+	{ 
+		return this == parent->left; 
+	}
+
+	bool HasRedChild() 
+	{
+		return (left != nullptr && left->Color == red) ||
+			(right != nullptr && right->Color == red);
+	}
+
+	Person *Sibling() 
+	{
+		if (parent == nullptr)
+			return nullptr;
+
+		if (IsOnLeft())
+			return parent->right;
+
+		return parent->left;
+	}
+
+	void MoveDown(Person *nParent) {
+		if (parent != nullptr) {
+			if (IsOnLeft()) {
+				parent->left = nParent;
+			}
+			else {
+				parent->right = nParent;
+			}
+		}
+		nParent->parent = parent;
+		parent = nParent;
+	}
+
 };
 
 class Book {
@@ -47,12 +85,433 @@ public:
 	
 	bool Add(Person *person) //Add a node to the tree
 	{
-		
+		root = BSTAdd(root, person);
+
+		if (root == nullptr) // Person already existed
+			return false;
+
+		FixViolation(root, person);
+	}
+
+	Person *BSTAdd(Person *root, Person *person)
+	{
+		/* If the tree is empty, return a new node */
+		if (root == nullptr)
+			return person;
+
+		/* Otherwise, recur down the tree */
+		if (person->lastName < root->lastName)
+		{
+			root->left = BSTAdd(root->left, person);
+			root->left->parent = root;
+		}
+		else if (person->lastName > root->lastName)
+		{
+			root->right = BSTAdd(root->right, person);
+			root->right->parent = root;
+		}
+		else
+		{
+			if (person->firstName < root->firstName)
+			{
+				root->left = BSTAdd(root->left, person);
+				root->left->parent = root;
+			}
+			else if (person->firstName > root->firstName)
+			{
+				root->right = BSTAdd(root->right, person);
+				root->right->parent = root;
+			}
+			else
+				return nullptr;
+		}
+
+		return root;
+	}
+
+	void FixViolation(Person *&root, Person *&person)
+	{
+		Person *parentPerson = nullptr;
+		Person *grandParentPerson = nullptr;
+
+		while ((person != root) && (person->Color != black) && (person->parent->Color == red))
+		{
+			parentPerson = person->parent;
+			grandParentPerson = person->parent->parent;
+
+			if (parentPerson == grandParentPerson->left) // Parent of Person is left child of Grand parent of Person
+			{
+				Person *unclePerson = grandParentPerson->right;
+
+				if (unclePerson != nullptr && unclePerson->Color == red) // Uncle of person is red
+				{
+					grandParentPerson->Color = red;
+					parentPerson->Color = black;
+					unclePerson->Color = black;
+					person = grandParentPerson;
+				}
+
+				else
+				{
+					if (person == parentPerson->right) // Person is the right child
+					{
+						RotateLeft(root, parentPerson);
+						person = parentPerson;
+						parentPerson = person->parent;
+					}
+					// Person is the left child
+					RotateRight(root, grandParentPerson);
+					std::swap(parentPerson->Color, grandParentPerson->Color);
+					person = parentPerson;
+				}
+			}
+			else // Parent of pt is right child of Grand-parent of pt
+			{
+				Person *unclePerson = grandParentPerson->left;
+				
+				if ((unclePerson != nullptr) && (unclePerson->Color == red)) // Uncle of person is red
+				{
+					grandParentPerson->Color = red;
+					parentPerson->Color = black;
+					unclePerson->Color = black;
+					person = grandParentPerson;
+				}
+				else
+				{
+					if (person == parentPerson->left) // Person is the left child
+					{
+						RotateRight(root, parentPerson);
+						person = parentPerson;
+						parentPerson = person->parent;
+					}
+					// Person is the right child
+					RotateLeft(root, grandParentPerson);
+					std::swap(parentPerson->Color, grandParentPerson->Color);
+					person = parentPerson;
+				}
+			}
+		}
+
+		root->Color = black;
+	}
+
+	void RotateLeft(Person *&root, Person *&person)
+	{
+		Person *rightPerson = person->right;
+
+		person->right = rightPerson->left;
+
+		if (person->right != nullptr)
+			person->right->parent = person;
+
+		rightPerson->parent = person->parent;
+
+		if (person->parent == nullptr)
+			root = rightPerson;
+
+		else if (person == person->parent->left)
+			person->parent->left = rightPerson;
+
+		else
+			person->parent->right = rightPerson;
+
+		rightPerson->left = person;
+		person->parent = rightPerson;
+	}
+
+	void RotateRight(Person *&root, Person *&person)
+	{
+		Person *leftPerson = person->left;
+
+		person->left = leftPerson->right;
+
+		if (person->left != nullptr)
+			person->left->parent = person;
+
+		leftPerson->parent = person->parent;
+
+		if (person->parent == nullptr)
+			root = leftPerson;
+
+		else if (person == person->parent->left)
+			person->parent->left = leftPerson;
+
+		else
+			person->parent->right = leftPerson;
+
+		leftPerson->right = person;
+		person->parent = leftPerson;
+	}
+
+	void LeftRotate(Person *person) 
+	{
+		Person *newParent = person->right;
+		if (person == root)
+			root = newParent;
+
+		person->MoveDown(newParent);
+		person->right = newParent->left;
+
+		if (newParent->left != nullptr)
+			newParent->left->parent = person;
+
+		newParent->left = person;
+	}
+
+	void RightRotate(Person *person) {
+		Person *newParent = person->left; 
+
+		if (person == root)
+			root = newParent;
+
+		person->MoveDown(newParent);
+		person->left = newParent->right;
+
+		if (newParent->right != nullptr)
+			newParent->right->parent = person;
+
+		newParent->right = person;
+	}
+
+	void FixDoubleBlack(Person *x)
+	{
+		if (x == root)
+			return;
+
+		Person *sibling = x->Sibling(), *parent = x->parent;
+
+		if (sibling == nullptr) 
+			FixDoubleBlack(parent);
+		else 
+		{
+			if (sibling->Color == red) 
+			{
+				parent->Color = red;
+				sibling->Color = black;
+				if (sibling->IsOnLeft()) 
+					RightRotate(parent);
+				else 
+					LeftRotate(parent);
+
+				FixDoubleBlack(x);
+			}
+			else 
+			{
+				if (sibling->HasRedChild()) 
+				{
+					if (sibling->left != nullptr && sibling->left->Color == red) 
+					{
+						if (sibling->IsOnLeft()) // left left 
+						{
+							sibling->left->Color = sibling->Color;
+							sibling->Color = parent->Color;
+							RightRotate(parent);
+						}
+						else // right left 
+						{
+							sibling->left->Color = parent->Color;
+							RightRotate(sibling);
+							LeftRotate(parent);
+						}
+					}
+					else 
+					{
+						if (sibling->IsOnLeft()) // left right 
+						{
+							sibling->right->Color = parent->Color;
+							LeftRotate(sibling);
+							RightRotate(parent);
+						}
+						else // right right 
+						{
+							sibling->right->Color = sibling->Color;
+							sibling->Color = parent->Color;
+							LeftRotate(parent);
+						}
+					}
+
+					parent->Color = black;
+				}
+				else // 2 black children 
+				{
+					sibling->Color = red;
+
+					if (parent->Color == black)
+						FixDoubleBlack(parent);
+					else
+						parent->Color = black;
+				}
+			}
+		}
+	}
+
+	Person *successor(Person *person) 
+	{
+		Person *temp = person;
+
+		while (temp->left != nullptr)
+			temp = temp->left;
+
+		return temp;
+	}
+
+	Person *BSTreplace(Person *person) 
+	{
+		if ((person->left != nullptr) && (person->right != nullptr)) // Two children
+			return successor(person->right);
+
+		if ((person->left == nullptr) && (person->right == nullptr))
+			return nullptr;
+
+		if (person->left != nullptr) // Single Child
+			return person->left;
+		else
+			return person->right;
+	}
+
+	void SwapValues(Person *person1, Person *person2) {
+		std::string temp;
+		temp = person1->lastName;
+		person1->lastName = person2->lastName;
+		person2->lastName = temp;
+
+		temp = person1->firstName;
+		person1->firstName = person2->firstName;
+		person2->firstName = temp;
+
+		temp = person1->phoneNumber;
+		person1->phoneNumber = person2->phoneNumber;
+		person2->phoneNumber = temp;
+	}
+
+	void DeleteNode(Person *person) 
+	{
+		Person *replacePerson = BSTreplace(person);
+		bool bothBlack = ((replacePerson == nullptr || replacePerson->Color == black) && (person->Color == black));
+		Person *parent = person->parent;
+
+		if (replacePerson == nullptr)
+		{
+			if (person == root)
+				root = nullptr;
+			else 
+			{
+				if (bothBlack) 
+					FixDoubleBlack(person);
+				else 
+				{
+					if (person->Sibling() != nullptr)
+						person->Sibling()->Color = red;
+				}
+
+				if (person->IsOnLeft()) 
+					parent->left = nullptr;
+				else 
+					parent->right = nullptr;
+			}
+
+			delete person;
+			return;
+		}
+
+		if (person->left == nullptr || person->right == nullptr) 
+		{
+			if (person == root) // one child
+			{
+				person->lastName = replacePerson->lastName;
+				person->firstName = replacePerson->firstName;
+				person->phoneNumber = replacePerson->phoneNumber;
+				person->left = person->right = nullptr;
+				delete replacePerson;
+			}
+			else 
+			{
+				if (person->IsOnLeft())
+				{
+					parent->left = replacePerson;
+				}
+				else
+				{
+					parent->right = replacePerson;
+				}
+
+				delete person;
+				replacePerson->parent = parent;
+
+				if (bothBlack)
+					FixDoubleBlack(replacePerson);
+				else 
+					replacePerson->Color = black;
+			}
+
+			return;
+		}
+
+		SwapValues(replacePerson, person);
+		DeleteNode(replacePerson);
+	}
+
+	Person *Search(std::string first_name, std::string last_name) 
+	{
+		Person *temp = root;
+
+		while (temp != nullptr)
+		{
+			if (last_name < temp->lastName)
+			{
+				if (temp->left == nullptr)
+					break;
+				else
+					temp = temp->left;
+			}
+			else if (last_name > temp->lastName)
+			{
+				if (temp->right == nullptr)
+					break;
+				else
+					temp = temp->right;
+			}
+			else
+			{
+
+				if (first_name < temp->firstName)
+				{
+					if (temp->left == nullptr)
+						break;
+					else
+						temp = temp->left;
+				}
+				else if (first_name > temp->firstName)
+				{
+					if (temp->right == nullptr)
+						break;
+					else
+						temp = temp->right;
+				}
+				else
+				{
+					if (temp->right == nullptr)
+						break;
+					else
+						temp = temp->right;
+				}
+			}
+		}
+		return temp;
 	}
 
 	bool Delete(std::string first_name, std::string last_name) //Remove a node from the tree
 	{
-		
+		if (root == nullptr)
+			return false;
+
+		Person *v = Search(first_name, last_name);
+
+		if (v->lastName != last_name && v->firstName != first_name)
+			return false;
+
+		DeleteNode(v);
+		return true;
 	}
 
 	std::string Find(std::string first_name, std::string last_name) //Find a node and return the phone number
@@ -97,7 +556,7 @@ public:
 	}
 	void Quit() //Save the tree to a text file and quit
 	{
-		std::ofstream file("phonebook.txt"); // open file
+		std::ofstream file(FILENAME); // open file
 
 		if (root == nullptr)
 			return;
@@ -125,7 +584,7 @@ public:
 	}
 	void ReadFile()
 	{
-		std::ifstream file("phonebook.txt"); // open file
+		std::ifstream file(FILENAME); // open file
 		std::string str;
 		size_t pos = 0;
 		int i = 0;
