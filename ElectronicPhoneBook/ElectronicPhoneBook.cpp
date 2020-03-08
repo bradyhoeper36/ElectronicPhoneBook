@@ -1,4 +1,3 @@
-#include "pch.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,7 +7,7 @@
 
 const char *FILENAME = "phonebook.txt";
 
-enum color{ red, black};
+enum color{ red, black };
 
 struct Person {
 	Person() : firstName(""), lastName(""), phoneNumber(""), Color(color::black), left(nullptr), right(nullptr), parent(nullptr) {}
@@ -55,7 +54,6 @@ struct Person {
 		nParent->parent = parent;
 		parent = nParent;
 	}
-
 };
 
 class Book {
@@ -490,10 +488,7 @@ public:
 				}
 				else
 				{
-					if (temp->right == nullptr)
-						break;
-					else
-						temp = temp->right;
+					return temp;
 				}
 			}
 		}
@@ -517,7 +512,7 @@ public:
 	std::string Find(std::string first_name, std::string last_name) //Find a node and return the phone number
 	{
 		if (root == nullptr)
-			return false;
+			return "No phone number found";
 
 		if (root->lastName == last_name && root->firstName == first_name)
 		{
